@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html>
+<div class="text-center">
+ <div id="wrapper">
+</div>
+<header role="banner">
+<a href="index.php"> 
+<img src="blogo.png" alt="Waffle Inc." />  
+</a> 
+</header>
+<div>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="">
+      <meta name="author" content="">
+    <meta name="author" content="">
+     <link href="../final/startbootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../final/startbootstrap/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+   <link href="../final/startbootstrap/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+  <link href="../final/startbootstrap/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+   <link href="../final/startbootstrap/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+  <link href="../final/startbootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+   <link href="../final/startbootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+</head>
+<body>
+
+    <script src="../final/startbootstrap/bower_components/jquery/dist/jquery.min.js"></script>
+   <script src="../final/startbootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+   <script src="../final/startbootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+   <script src="../final/startbootstrap/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+   <script src="../final/startbootstrap/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+   <script src="../final/startbootstrap/dist/js/sb-admin-2.js"></script>
+   <script>
+    $(document).ready(function() {
+        $('#dataTables-example').DataTable({
+                responsive: true
+        });
+    });
+    </script>
+
+    </ul>
+    <div>
+    </div>
+
+
+
+
+
+
+
+
+<script>
+  var userID;
+
+    var url= window.location.href;
+    var page_id_url = url.substring(url.indexOf("id")+3,url.indexOf("&"));
+    var category_url = url.substring(url.indexOf("category")+9,url.indexOf("&search"));
+ 
+ //var nextPage;
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log(page_id_url);
+    console.log(category_url);
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      testAPI(); testFeed2(); testFeed(); 
+      //testGraph();
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this app.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+
+
+
+
+
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '611553682311025',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.1' // use version 2.1
+  });
+
+  // Now that we've initialized the JavaScript SDK, we call 
+  // FB.getLoginStatus().  This function gets the state of the
+  // person visiting this page and can return one of three states to
+  // the callback you provide.  They can be:
+  //
+  // 1. Logged into your app ('connected')
+  // 2. Logged into Facebook, but not your app ('not_authorized')
+  // 3. Not logged into Facebook and can't tell if they are logged into
+  //    your app or not.
+  //
+  // These three cases are handled in the callback function.
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+      if (response.status === 'connected') {
+        //access token
+    console.log(response.authResponse.accessToken);
+    userID = response.authResponse.userID+"<br>";
+  }
+  });
+
+
+  FB.login(function(response) {
+   // handle the response- permission on news feed
+ }, {
+  scope: 'read_stream,user_friends',return_scopes: true}
+  );
+
+//   FB.api(
+//     "/me/feed",
+//     function (response) {
+//       if (response && !response.error) {
+//         /* handle the result */
+//         // document.getElementById('statuss').innerHTML = JSON.stringify(response);
+//         console.log(JSON.stringify(response));
+//       }
+//     }
+// );
+
+ 
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      
+      console.log('Successful login for: ' + response.name);
+      document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!'+JSON.stringify(response);
+
+    });
+}
+
+var page_name, page_id, about, fans, mention;
+var timestamp= Date();
+var i=0;
+var getPage=    function (response) {
+      if (response && !response.error) {
+        /* handle the result */
+        var obj = response;
+        page_name= obj.name;
+        page_id=obj.id;
+        about= obj.about;
+        fans=obj.likes;
+        mention= obj.talking_about_count;
+        cat= category_url;
+        fb_cat=obj.category;
+
+        // document.getElementById('status').innerHTML +=
+        //                                             "<p style='font-size:30px;color:blue'><strong> Page Info :"+page_name+"</strong></p>"+"<br>"+
+        //                                              "Time Stamp: "+timestamp+"<br>"+
+
+        //                                             "ID: "+page_id+"<br>"+
+        //                                             "Name: "+page_name+
+        //                                             "category: "+cat+
+        //                                             "FB-category: "+obj.category+
+        //                                             "About: "+about+"<br>"+
+        //                                             "Fans: "+fans+"<br>"+
+        //                                             "Mentions: "+mention+"<br>"+"<br>";
+          ajax_page();
+     }
+  }
+
+function testFeed(){
+  FB.api(
+    '/'+page_id_url,getPage
+    );
+}
+
+
+
+
+var obj, car,id,like_count, createdTime,page_id,date,time,timestamp,postDate,cat;
+
+var countPost=0
+var countPage=0;
+var j=0;
+var duplicate=null;
+var getPost =    function (response) {
+
+    console.log("LOOOOOOOOOP");
+
+      if (response && !response.error) {
+        if(countPage==0){
+           obj = response.posts;
+           console.log("FIRST");
+        }else{
+          obj=response;
+          console.log("SECOND");
+        }
+      
+        for(i=0;i<obj.data.length;i++){
+          createdTime = obj.data[i].created_time+"";
+          id=obj.data[i].id;
+          page_id=id.substring(0,id.indexOf("_"));
+          date = createdTime.substring(0, createdTime.indexOf("T"));
+          time = createdTime.substring(createdTime.indexOf("T")+1, createdTime.indexOf("+"));
+          cat=category_url
+
+        
+         
+          if(obj.data[i].likes!= undefined){
+            like_count=obj.data[i].likes.summary.total_count;
+          }else{
+            like_count=0;
+          }
+        
+            document.getElementById('feed').innerHTML +="<p style='font-size:30px;color:GREY'> Trying to Get FEED "+(countPost+1)+" from the page category "+cat+" </p>"+"<br>"+
+                                                    "ID: "+id+ "<br>" +
+                                                  
+                                                    "Likes: "+ like_count+ "<br>" +
+                                                    "Created Time: "+ createdTime + "<br>" +
+                                                    "Date: "+ date + "<br>" +
+                                                    "Time: " + time + "<br>";
+
+
+                    if(duplicate != "Duplicate"){
+                     ajax_post();
+                                                  countPost++;
+                                                  console.log(createdTime+" VS "+timestamp)
+
+                    }
+
+                    else{
+                      
+
+                    }
+                              
+                                                     
+      }
+console.log(countPost+" :Post");
+
+     }
+
+     
+   if ((obj.paging)!= undefined && duplicate!="Duplicate"){
+     countPage++;
+     console.log(countPage+" :PAGE")
+    var source=obj.paging.next;
+   
+    console.log(source);
+
+    var path=source.substring(source.indexOf(page_id),obj.paging.next.length)
+
+    console.log("-------"+path);
+    
+       FB.api(path, getPost);
+  }else{
+    console.log(j+"HIII");
+     document.getElementById('status').innerHTML = "<p style='font-size:30px;color:blue'><strong> Successfully retrieved all posts!</strong></p>"
+     // j++;
+      
+      countPage=0;
+      countPost=0;
+      duplicate=null;
+//     console.log(j);
+//       if(j<category[order].length){
+//         testFeed2();
+//         console.log("new brand");
+//       }else{
+// console.log("ENDDDD");
+//       }
+
+
+
+     }
+   }
+
+
+
+function testFeed2(){
+
+  
+FB.api(
+    '/'+page_id_url+'?fields=posts{likes.limit(1).summary(true),comments.limit(1).summary(true)}', getPost
+);
+
+    }
+
+
+
+
+
+
+
+
+
+  
+  function ajax_page(){
+    // Create our XMLHttpRequest object
+    console.log(page_id);
+    var hr = new XMLHttpRequest();
+    // Create some variables we need to send to our PHP file
+    var url = "../testphp/addDB_page.php";
+    // var fn = document.getElementById("first_name").value;
+    // var ln = document.getElementById("last_name").value;
+    //var vars = "w1="+id+"&w2="+'user post'+"&w3="+like_count+"&w4="+createdTime;
+    //console.log("test"+id+like_count);
+    hr.open("POST", url, true);
+    // Set content type header information for sending url encoded variables in the request
+    hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    // Access the onreadystatechange event for the XMLHttpRequest object
+    hr.onreadystatechange = function() {
+      if(hr.readyState == 4 && hr.status == 200) {
+        var return_data = hr.responseText;
+      document.getElementById("status").innerHTML = return_data;
+      }
+    }
+    // Send the data to PHP now... and wait for response to update the status div
+    hr.send("w1="+page_id+"&w2="+mention+"&w3="+fans+"&w4="+page_name+"&w5="+cat+"&w6="+fb_cat); // Actually execute the request
+    
+    document.getElementById("status").innerHTML = "processing...";
+}
+
+  function ajax_post(){
+    // Create our XMLHttpRequest object
+    console.log("TEST TEST");
+    var hr = new XMLHttpRequest();
+    // Create some variables we need to send to our PHP file
+    var url = "../testphp/addDB_post.php";
+    // var fn = document.getElementById("first_name").value;
+    // var ln = document.getElementById("last_name").value;
+    //var vars = "w1="+id+"&w2="+'user post'+"&w3="+like_count+"&w4="+createdTime;
+    //console.log("test"+id+like_count);
+    hr.open("POST", url, true);
+    // Set content type header information for sending url encoded variables in the request
+    hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    // Access the onreadystatechange event for the XMLHttpRequest object
+    hr.onreadystatechange = function() {
+      if(hr.readyState == 4 && hr.status == 200) {
+        var return_data = hr.responseText;
+      document.getElementById("status").innerHTML = return_data;
+      duplicate=return_data.substring(0,9);
+      }
+    }
+    // Send the data to PHP now... and wait for response to update the status div
+    hr.send("w1="+id+"&w2="+'user post'+"&w3="+like_count+"&w4="+date+"&w5="+time+"&w6="+page_id+"&w7="+cat); // Actually execute the request
+    console.log("!!!!!!!!------"+cat);
+    
+    document.getElementById("status").innerHTML = "processing...";
+}
+
+
+
+</script>
+
+<!--
+  Below we include the Login Button social plugin. This button uses
+  the JavaScript SDK to present a graphical Login button that triggers
+  the FB.login() function when clicked.
+-->
+
+<!-- <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button> -->
+
+<div id="status">
+</div>
+
+<div id="feed">
+</div>
+
+</body>
+</html>
